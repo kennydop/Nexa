@@ -6,6 +6,7 @@ import { FileOpener } from '@/components/viewer/FileOpener'
 import { MediaBadge } from '@/components/viewer/MediaBadge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/features/auth/context'
+import { OfflinePackTeaser } from '@/features/plans/OfflinePackTeaser'
 import { useMaterials } from '@/hooks/queries'
 import { cn, timeAgo } from '@/lib/utils'
 import { KIND_META } from './meta'
@@ -24,6 +25,8 @@ export function MaterialsTab({ courseId }: { courseId: string }) {
         <Plus size={18} weight="bold" />
         Add material
       </Button>
+
+      {Boolean(materials.data?.length) && <OfflinePackTeaser />}
 
       {materials.isPending ? (
         Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[4.5rem]" />)

@@ -17,6 +17,7 @@ const ProgramPage = lazy(() => import('@/features/program/ProgramPage').then((m)
 const SavedPage = lazy(() => import('@/features/saved/SavedPage').then((m) => ({ default: m.SavedPage })))
 const SearchPage = lazy(() => import('@/features/search/SearchPage').then((m) => ({ default: m.SearchPage })))
 const ModeratePage = lazy(() => import('@/features/moderate/ModeratePage').then((m) => ({ default: m.ModeratePage })))
+const PlansPage = lazy(() => import('@/features/plans/PlansPage').then((m) => ({ default: m.PlansPage })))
 const NotFoundPage = lazy(() => import('@/features/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
 
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: '/saved', element: <SavedPage /> },
       { path: '/me', element: <MePage /> },
       { path: '/moderate', element: <ModeratePage /> },
+      { path: '/plans', element: <PlansPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

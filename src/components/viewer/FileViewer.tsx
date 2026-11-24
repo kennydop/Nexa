@@ -1,7 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { ArrowSquareOut, CircleNotch, DownloadSimple, FileX, X } from '@phosphor-icons/react'
+import { ArrowSquareOut, CircleNotch, DownloadSimple, FileX, Sparkle, X } from '@phosphor-icons/react'
 import { lazy, Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { AiTeaserPanel } from '@/features/plans/AiTeaserPanel'
 import { detectMedia } from '@/lib/media'
 import { cn } from '@/lib/utils'
 
@@ -60,6 +61,9 @@ interface FileViewerProps {
 /** Full-screen in-app viewer for PDFs, images, videos and YouTube links. */
 export function FileViewer({ file, onClose }: FileViewerProps) {
   const media = file ? detectMedia(file.url, file.mimeType) : null
+  const [assistantFor, setAssistantFor] = useState<string | null>(null)
+  const assistantOpen = file !== null && assistantFor === file.url
+  const canAsk = media?.type === 'pdf' || media?.type === 'image'
   return (
     <Dialog.Root open={file !== null} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
@@ -80,6 +84,18 @@ export function FileViewer({ file, onClose }: FileViewerProps) {
                   <Dialog.Title className="truncate font-bold">{file.title}</Dialog.Title>
                   {file.subtitle && <p className="truncate text-xs text-[#b9a6ae]">{file.subtitle}</p>}
                 </div>
+                {canAsk && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Study assistant"
+                    aria-pressed={assistantOpen}
+                    onClick={() => setAssistantFor(assistantOpen ? null : file.url)}
+                    className={cn('text-gold hover:bg-white/10', assistantOpen && 'bg-white/10')}
+                  >
+                    <Sparkle size={22} weight={assistantOpen ? 'fill' : 'duotone'} />
+                  </Button>
+                )}
                 {media.type !== 'youtube' && (
                   <Button asChild variant="ghost" size="icon" className="text-[#f7eee6] hover:bg-white/10">
                     <a href={downloadUrl(file.url)} download aria-label="Download">
@@ -125,6 +141,7 @@ export function FileViewer({ file, onClose }: FileViewerProps) {
                 </div>
               )}
               {media.type === 'external' && <Unsupported url={file.url} />}
+              {assistantOpen && <AiTeaserPanel onClose={() => setAssistantFor(null)} onSeePlans={onClose} />}
             </>
           )}
         </Dialog.Content>

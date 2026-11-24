@@ -11,6 +11,7 @@ import { backend } from '@/data/backend'
 import type { Program } from '@/data/types'
 import { useAuth } from '@/features/auth/context'
 import { InstallCard } from '@/features/install/InstallCard'
+import { YourPlanCard } from '@/features/plans/YourPlanCard'
 import { useProgram } from '@/hooks/queries'
 import { useTheme, type ThemeChoice } from '@/hooks/useTheme'
 import { levelLabel } from '@/lib/academic'
@@ -81,6 +82,8 @@ export function MePage() {
       )}
 
       {profile && <VerificationNote role={profile.role} isVerified={profile.isVerified} />}
+
+      <YourPlanCard />
 
       {profile?.isModerator && (
         <Link
