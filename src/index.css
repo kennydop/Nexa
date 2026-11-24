@@ -1,0 +1,194 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/manrope';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- Design tokens ---------- */
+/* Light ("paper", lifted from the logo's stock) */
+:root {
+  --bg: #f6f1e9;
+  --bg-glow: #f3dcc4;
+  --surface: #ffffff;
+  --surface-2: #f1e9df;
+  --surface-3: #e8ddd0;
+  --line: rgb(26 14 22 / 0.09);
+  --line-strong: rgb(26 14 22 / 0.18);
+  --text: #1a0e16;
+  --text-muted: #6e5a63;
+  --text-faint: #9a8890;
+
+  --brand: #b8692f;
+  --brand-strong: #96511f;
+  --brand-ink: #ffffff;
+  --brand-soft: rgb(184 105 47 / 0.12);
+  --plum: #5a2a3e;
+  --navy: #34486e;
+
+  --success: #12966b;
+  --danger: #d6345f;
+  --warning: #b9820a;
+
+  --shadow-card: 0 1px 0 rgb(26 14 22 / 0.04), 0 8px 24px -12px rgb(90 42 62 / 0.28);
+  --shadow-float: 0 18px 40px -16px rgb(26 14 22 / 0.45);
+  color-scheme: light;
+}
+
+/* Dark ("night campus"): default when the OS asks for it */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #140a12;
+    --bg-glow: #3a1a2a;
+    --surface: #1f1420;
+    --surface-2: #2a1c2b;
+    --surface-3: #372637;
+    --line: rgb(255 240 230 / 0.08);
+    --line-strong: rgb(255 240 230 / 0.16);
+    --text: #f7eee6;
+    --text-muted: #b9a6ae;
+    --text-faint: #85727b;
+    --brand: #f0a062;
+    --brand-strong: #ffb882;
+    --brand-ink: #1a0e16;
+    --brand-soft: rgb(240 160 98 / 0.14);
+    --success: #3ee0a8;
+    --danger: #ff5c8a;
+    --warning: #ffc93c;
+    --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 10px 30px -18px rgb(0 0 0 / 0.8);
+    --shadow-float: 0 24px 50px -18px rgb(0 0 0 / 0.85);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #140a12;
+  --bg-glow: #3a1a2a;
+  --surface: #1f1420;
+  --surface-2: #2a1c2b;
+  --surface-3: #372637;
+  --line: rgb(255 240 230 / 0.08);
+  --line-strong: rgb(255 240 230 / 0.16);
+  --text: #f7eee6;
+  --text-muted: #b9a6ae;
+  --text-faint: #85727b;
+  --brand: #f0a062;
+  --brand-strong: #ffb882;
+  --brand-ink: #1a0e16;
+  --brand-soft: rgb(240 160 98 / 0.14);
+  --success: #3ee0a8;
+  --danger: #ff5c8a;
+  --warning: #ffc93c;
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 10px 30px -18px rgb(0 0 0 / 0.8);
+  --shadow-float: 0 24px 50px -18px rgb(0 0 0 / 0.85);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-faint: var(--text-faint);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-plum: var(--plum);
+  --color-navy: var(--navy);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+
+  /* Orbit moon colours: one per college, theme-independent */
+  --color-ember: #ff7a45;
+  --color-lime: #b8e62e;
+  --color-sky: #4fbdf5;
+  --color-violet: #a98bff;
+  --color-rose: #ff5c8a;
+  --color-gold: #ffc23c;
+  --color-mint: #2fd39b;
+
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-chip: 12px;
+  --radius-card: 22px;
+  --radius-hero: 32px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg font-sans text-text antialiased;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--brand-soft);
+  }
+}
+
+@layer utilities {
+  .pt-safe {
+    padding-top: max(env(safe-area-inset-top), 0.75rem);
+  }
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Warm atmospheric glow behind page headers */
+  .atmosphere {
+    background:
+      radial-gradient(120% 60% at 85% -10%, var(--bg-glow) 0%, transparent 60%),
+      radial-gradient(80% 40% at -10% 0%, rgb(52 72 110 / 0.25) 0%, transparent 70%);
+  }
+  /* Subtle paper grain, echoing the logo's stock */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

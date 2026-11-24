@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 900" fill="none">
+  <defs>
+    <linearGradient id="cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D49A5E"/>
+      <stop offset="1" stop-color="#A86C3C"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="180" x2="0" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B27A47"/>
+      <stop offset="1" stop-color="#6B2F33"/>
+    </linearGradient>
+    <linearGradient id="step" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4A1C2A"/>
+      <stop offset="0.6" stop-color="#5A2A3E"/>
+      <stop offset="1" stop-color="#34486E"/>
+    </linearGradient>
+  </defs>
+  <!-- cap -->
+  <path d="M215 88 L385 26 L555 88 L385 150 Z" fill="url(#cap)"/>
+  <path d="M290 128 L385 162 L480 128 V215 Q385 248 290 215 Z" fill="url(#cap)"/>
+  <path d="M242 102 V168" stroke="#A86C3C" stroke-width="10" stroke-linecap="round"/>
+  <path d="M234 160 L250 160 L256 196 L228 196 Z" fill="#A86C3C"/>
+  <!-- book pages, left -->
+  <g fill="url(#book)">
+    <path d="M30 360 Q200 300 372 398 L366 420 Q200 340 36 384 Z"/>
+    <path d="M78 270 Q240 250 370 380 L360 396 Q230 290 84 300 Z"/>
+    <path d="M114 220 Q260 230 372 368 L360 380 Q250 262 120 250 Z"/>
+    <path d="M168 180 Q290 205 376 356 L364 364 Q275 232 172 210 Z"/>
+    <!-- right (mirrored about x=385) -->
+    <path d="M740 360 Q570 300 398 398 L404 420 Q570 340 734 384 Z"/>
+    <path d="M692 270 Q530 250 400 380 L410 396 Q540 290 686 300 Z"/>
+    <path d="M656 220 Q510 230 398 368 L410 380 Q520 262 650 250 Z"/>
+    <path d="M602 180 Q480 205 394 356 L406 364 Q495 232 598 210 Z"/>
+    <path d="M350 400 Q385 418 420 400 Q420 438 385 438 Q350 438 350 400 Z" fill="#6B2F33"/>
+  </g>
+  <!-- steps -->
+  <g fill="url(#step)">
+    <rect x="448" y="412" width="292" height="102" rx="3"/>
+    <rect x="303" y="534" width="292" height="102" rx="3"/>
+    <rect x="160" y="655" width="292" height="102" rx="3"/>
+    <rect x="18" y="776" width="292" height="102" rx="3"/>
+  </g>
+</svg>

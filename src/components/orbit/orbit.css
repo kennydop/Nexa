@@ -1,0 +1,56 @@
+.orbit {
+  container-type: inline-size;
+}
+
+.orbit-ring {
+  border: 1.5px dashed var(--line-strong);
+}
+
+.orbit-track {
+  animation: orbit-spin 80s linear infinite;
+}
+.orbit-track--outer {
+  animation-duration: 120s;
+  animation-direction: reverse;
+}
+
+/* Place each moon on its ring, then cancel the slot's rotation. */
+.orbit-slot {
+  transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(var(--angle) * -1));
+  width: 0;
+  height: 0;
+}
+.orbit-moon-upright {
+  position: absolute;
+  translate: -50% -50%;
+  animation: orbit-spin 80s linear infinite reverse;
+}
+.orbit-track--outer .orbit-moon-upright {
+  animation-duration: 120s;
+  animation-direction: normal;
+}
+
+/* Pause while the user is interacting so moons are easy to tap. */
+.orbit:has(:hover, :focus-visible) .orbit-track,
+.orbit:has(:hover, :focus-visible) .orbit-moon-upright {
+  animation-play-state: paused;
+}
+
+.orbit-still .orbit-track,
+.orbit-still .orbit-moon-upright {
+  animation: none;
+}
+
+.orbit-sun {
+  background: radial-gradient(circle at 35% 30%, #ffd9a8 0%, #f0a062 45%, #b8692f 100%);
+  box-shadow:
+    0 0 0 10px rgb(240 160 98 / 0.12),
+    0 0 0 22px rgb(240 160 98 / 0.06),
+    0 20px 60px -10px rgb(240 160 98 / 0.65);
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
