@@ -1,5 +1,5 @@
 import { EmailNotConfirmedError, RepositoryError } from '../repository'
-import { toAuthError } from './authErrors'
+import { readAuthRedirectError, toAuthError } from './authErrors'
 
 const supabaseError = (code: string, message = 'raw') => Object.assign(new Error(message), { code, status: 400 })
 
@@ -23,5 +23,28 @@ describe('toAuthError', () => {
     const error = toAuthError(supabaseError('something_new', 'internal detail'), 'a@b.com')
     expect(error).toBeInstanceOf(RepositoryError)
     expect(error.message).toBe('Something went wrong. Please try again.')
+  })
+})
+
+describe('toAuthError when the email service fails', () => {
+  it('says the email could not be sent instead of a generic error', () => {
+    const smtpFailure = Object.assign(new Error('Error sending confirmation email'), { code: 'unexpected_failure', status: 500 })
+    expect(toAuthError(smtpFailure, 'a@b.com').message).toMatch(/couldn’t send the email/i)
+  })
+})
+
+describe('readAuthRedirectError', () => {
+  it('explains expired or reused confirmation links', () => {
+    const hash = '#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired'
+    expect(readAuthRedirectError(hash, '')).toMatch(/expired or was already used/i)
+  })
+
+  it('reads errors from the query string too', () => {
+    expect(readAuthRedirectError('', '?error=server_error&error_description=Something')).toMatch(/couldn’t confirm/i)
+  })
+
+  it('returns null for normal pages and successful sign-in redirects', () => {
+    expect(readAuthRedirectError('', '')).toBeNull()
+    expect(readAuthRedirectError('#access_token=abc&type=signup', '')).toBeNull()
   })
 })

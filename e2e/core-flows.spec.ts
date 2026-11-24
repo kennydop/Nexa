@@ -110,3 +110,10 @@ test('the app runs under the production security headers', async ({ page }) => {
   await expect(page.getByRole('dialog').getByRole('img', { name: 'Page 1' })).toBeVisible()
   expect(violations).toEqual([])
 })
+
+test('an expired confirmation link explains itself and opens sign-in', async ({ page }) => {
+  await page.goto('/#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired')
+  await expect(page.getByText(/expired or was already used/)).toBeVisible()
+  await expect(page.getByRole('dialog')).toContainText('Join the conversation')
+  expect(new URL(page.url()).hash).toBe('')
+})
