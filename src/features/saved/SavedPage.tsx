@@ -1,10 +1,11 @@
-import { BookmarkSimple } from '@phosphor-icons/react'
+import { BookmarkSimple, CloudArrowDown } from '@phosphor-icons/react'
 import { Link } from 'react-router'
 import { CourseRow } from '@/components/CourseRow'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAuth } from '@/features/auth/context'
+import { NudgeCard } from '@/features/plans/NudgeCard'
 import { useBookmarks } from '@/hooks/queries'
 
 export function SavedPage() {
@@ -24,13 +25,22 @@ export function SavedPage() {
       ) : bookmarks.isPending ? (
         Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[4.5rem]" />)
       ) : bookmarks.data?.length ? (
-        <ul className="-mx-2">
-          {bookmarks.data.map((course) => (
-            <li key={course.id}>
-              <CourseRow course={course} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="-mx-2">
+            {bookmarks.data.map((course) => (
+              <li key={course.id}>
+                <CourseRow course={course} />
+              </li>
+            ))}
+          </ul>
+          <NudgeCard
+            id="saved-offline"
+            plan="pro"
+            icon={CloudArrowDown}
+            title="Take your saved courses offline"
+            body="With Pro, every material and past question in these courses downloads in one tap. Study without data."
+          />
+        </>
       ) : (
         <EmptyState
           icon={BookmarkSimple}

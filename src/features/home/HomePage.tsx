@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkle } from '@phosphor-icons/react'
+import { ArrowRight, CalendarCheck, Sparkle } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { CourseOrbit } from '@/components/orbit/CourseOrbit'
@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { FEATURED_PROGRAM_ID } from '@/data/featured'
 import { useAuth } from '@/features/auth/context'
 import { InstallCard } from '@/features/install/InstallCard'
+import { NudgeCard } from '@/features/plans/NudgeCard'
 import { useCurriculum, useProgram } from '@/hooks/queries'
 import { coursesFor, currentSemester, totalCredits } from '@/lib/academic'
 import { APP_NAME } from '@/lib/brand'
@@ -120,6 +121,16 @@ export function HomePage() {
             ))}
           </ul>
         </section>
+      )}
+
+      {entries.length > 0 && (
+        <NudgeCard
+          id="home-exam-planner"
+          plan="pro"
+          icon={CalendarCheck}
+          title="Exams coming up? Plan them with Pro"
+          body="Countdowns for every course you take, and reminders to revise the right past questions in time."
+        />
       )}
 
       <CollegeStrip />

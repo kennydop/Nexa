@@ -1,4 +1,4 @@
-import { Exam, Plus } from '@phosphor-icons/react'
+import { Exam, ListChecks, Plus } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -7,6 +7,7 @@ import { MediaBadge } from '@/components/viewer/MediaBadge'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { PastQuestion } from '@/data/types'
 import { useAuth } from '@/features/auth/context'
+import { NudgeCard } from '@/features/plans/NudgeCard'
 import { usePastQuestions } from '@/hooks/queries'
 import { EXAM_LABEL } from './meta'
 import { UploadPastQuestionSheet } from './UploadPastQuestionSheet'
@@ -68,6 +69,16 @@ export function PastQuestionsTab({ courseId, courseCode }: { courseId: string; c
           icon={Exam}
           title="No past questions yet"
           body="Got an old exam paper? Snap or scan it and upload it here to help the next set of students."
+        />
+      )}
+
+      {Boolean(questions.data?.length) && (
+        <NudgeCard
+          id="pq-tracker"
+          plan="pro"
+          icon={ListChecks}
+          title="Know which papers you’ve done"
+          body="Pro’s past-question tracker ticks off each paper as you practise, so you can see what’s left before the exam."
         />
       )}
 

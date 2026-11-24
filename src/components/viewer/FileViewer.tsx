@@ -3,6 +3,7 @@ import { ArrowSquareOut, CircleNotch, DownloadSimple, FileX, Sparkle, X } from '
 import { lazy, Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AiTeaserPanel } from '@/features/plans/AiTeaserPanel'
+import { AssistantCallout } from '@/features/plans/AssistantCallout'
 import { detectMedia } from '@/lib/media'
 import { cn } from '@/lib/utils'
 
@@ -56,10 +57,13 @@ function Unsupported({ url }: { url: string }) {
 interface FileViewerProps {
   file: ViewableFile | null
   onClose: () => void
+  /** Offer the study assistant (Premium) because the person is studying hard today. */
+  suggestAssistant?: boolean
+  onSuggestionDone?: () => void
 }
 
 /** Full-screen in-app viewer for PDFs, images, videos and YouTube links. */
-export function FileViewer({ file, onClose }: FileViewerProps) {
+export function FileViewer({ file, onClose, suggestAssistant = false, onSuggestionDone }: FileViewerProps) {
   const media = file ? detectMedia(file.url, file.mimeType) : null
   const [assistantFor, setAssistantFor] = useState<string | null>(null)
   const assistantOpen = file !== null && assistantFor === file.url
@@ -109,6 +113,15 @@ export function FileViewer({ file, onClose }: FileViewerProps) {
                   </a>
                 </Button>
               </header>
+              {suggestAssistant && canAsk && !assistantOpen && (
+                <AssistantCallout
+                  onTry={() => {
+                    setAssistantFor(file.url)
+                    onSuggestionDone?.()
+                  }}
+                  onDismiss={() => onSuggestionDone?.()}
+                />
+              )}
 
               {media.type === 'pdf' && (
                 <Suspense
