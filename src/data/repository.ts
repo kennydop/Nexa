@@ -106,6 +106,17 @@ export class RepositoryError extends Error {
   }
 }
 
+/** Signed up but hasn't clicked the confirmation link yet. */
+export class EmailNotConfirmedError extends RepositoryError {
+  readonly email: string
+
+  constructor(email: string, cause?: unknown) {
+    super('Confirm your email first. Check your inbox for the link we sent.', cause)
+    this.name = 'EmailNotConfirmedError'
+    this.email = email
+  }
+}
+
 export class AuthRequiredError extends RepositoryError {
   constructor() {
     super('Sign in to do that.')

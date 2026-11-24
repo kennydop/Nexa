@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { AuthService, SignUpInput } from '../auth'
 import { RepositoryError } from '../repository'
+import { toAuthError } from './authErrors'
 
 export class SupabaseAuth implements AuthService {
   private readonly db: SupabaseClient
@@ -21,7 +22,7 @@ export class SupabaseAuth implements AuthService {
 
   async signIn(email: string, password: string) {
     const { error } = await this.db.auth.signInWithPassword({ email, password })
-    if (error) throw new RepositoryError('Email or password is incorrect.', error)
+    if (error) throw toAuthError(error, email)
   }
 
   async signUp({ email, password, fullName, role }: SignUpInput) {
@@ -30,8 +31,13 @@ export class SupabaseAuth implements AuthService {
       password,
       options: { data: { full_name: fullName, role }, emailRedirectTo: window.location.origin },
     })
-    if (error) throw new RepositoryError(error.message, error)
+    if (error) throw toAuthError(error, email)
     return { needsEmailConfirmation: data.session === null }
+  }
+
+  async resendConfirmation(email: string) {
+    const { error } = await this.db.auth.resend({ type: 'signup', email, options: { emailRedirectTo: window.location.origin } })
+    if (error) throw toAuthError(error, email)
   }
 
   async signOut() {

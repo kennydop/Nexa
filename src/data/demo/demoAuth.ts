@@ -84,6 +84,10 @@ export class DemoAuth implements AuthService {
     return { needsEmailConfirmation: false }
   }
 
+  async resendConfirmation() {
+    // Demo accounts are confirmed on sign-up; there is no email to send.
+  }
+
   async signOut() {
     this.store.update((s) => ({ ...s, profile: null }))
     this.listeners.forEach((listener) => listener(null))

@@ -14,4 +14,6 @@ export interface AuthService {
   signIn(email: string, password: string): Promise<void>
   signUp(input: SignUpInput): Promise<{ needsEmailConfirmation: boolean }>
   signOut(): Promise<void>
+  /** Sends the sign-up confirmation link again. */
+  resendConfirmation(email: string): Promise<void>
 }
