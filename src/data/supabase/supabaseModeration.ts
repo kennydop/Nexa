@@ -1,8 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { courseIdFromCode, normaliseCourseCode } from '@/lib/institution'
+import { courseIdFromCode, normaliseCourseCode, programIdFromName } from '@/lib/institution'
 import { RepositoryError, type ModerationRepository } from '../repository'
-import type { ContentKind, ContentStatus, CurriculumCourseInput, UserRole } from '../types'
-import { mapModerationItem, mapPerson, type ModerationRow, type PersonRow } from './mappers'
+import type { ContentKind, ContentStatus, CurriculumCourseInput, Program, ProgramInput, UserRole } from '../types'
+import { mapModerationItem, mapPerson, mapProgram, type ModerationRow, type PersonRow, type ProgramRow } from './mappers'
 
 const BUCKET = 'course-files'
 const FEED_LIMIT = 100
@@ -89,5 +89,24 @@ export class SupabaseModeration implements ModerationRepository {
   async removeCurriculumCourse(programId: string, courseId: string) {
     const { error } = await this.db.from('program_courses').delete().match({ program_id: programId, course_id: courseId })
     check(error, 'remove the course')
+  }
+
+  async addProgram(input: ProgramInput): Promise<Program> {
+    const { data, error } = await this.db
+      .from('programs')
+      .insert({
+        id: programIdFromName(input.name),
+        name: input.name.trim(),
+        degree: input.degree.trim(),
+        award_level: input.awardLevel,
+        college_id: input.collegeId,
+        department_id: input.departmentId,
+        levels: input.levels,
+      })
+      .select()
+      .single<ProgramRow>()
+    if (error?.code === '23505') throw new RepositoryError(`${input.name.trim()} already exists.`, error)
+    check(error, 'create the programme')
+    return mapProgram(data as ProgramRow)
   }
 }

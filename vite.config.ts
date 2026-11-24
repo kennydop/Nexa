@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { readFileSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -9,7 +10,19 @@ import { VitePWA } from 'vite-plugin-pwa'
 const APP_NAME = 'Nexa'
 const THEME_COLOR = '#1A0E16'
 
+// `vite preview` serves the same security headers as production (vercel.json),
+// so the end-to-end tests fail if the CSP would block something.
+const vercel = JSON.parse(readFileSync(new URL('./vercel.json', import.meta.url), 'utf8')) as {
+  headers: { source: string; headers: { key: string; value: string }[] }[]
+}
+const PROD_HEADERS = Object.fromEntries(
+  (vercel.headers.find((h) => h.source === '/(.*)')?.headers ?? [])
+    .filter((h) => h.key !== 'Strict-Transport-Security')
+    .map((h) => [h.key, h.key === 'Content-Security-Policy' ? h.value.replace('; upgrade-insecure-requests', '') : h.value]),
+)
+
 export default defineConfig({
+  preview: { headers: PROD_HEADERS },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -46,8 +59,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
-        // The PDF worker (~1 MB) and demo files load on demand instead of in the install precache.
-        globIgnores: ['**/pdf.worker*', '**/PdfView-*', 'demo/**'],
+        // The PDF worker (~1 MB) and sample files load on demand instead of in the install precache.
+        globIgnores: ['**/pdf.worker*', '**/PdfView-*', 'samples/**'],
         navigateFallback: '/index.html',
         runtimeCaching: [
           {
@@ -62,9 +75,9 @@ export default defineConfig({
             },
           },
           {
-            // PDF viewer worker and demo-mode sample files.
+            // PDF viewer worker and the sample files.
             urlPattern: ({ url, sameOrigin }) =>
-              sameOrigin && (/\/(pdf\.worker|PdfView-)[^/]*$/.test(url.pathname) || /^\/demo\/.+\.(pdf|webp|jpg)$/.test(url.pathname)),
+              sameOrigin && (/\/(pdf\.worker|PdfView-)[^/]*$/.test(url.pathname) || /^\/samples\/.+\.(pdf|webp|jpg)$/.test(url.pathname)),
             handler: 'CacheFirst',
             options: {
               cacheName: 'viewer-assets',

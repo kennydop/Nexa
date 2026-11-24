@@ -58,7 +58,7 @@ test('a moderator verifies a pending lecturer', async ({ page }) => {
   await page.goto('/me')
   await page.getByRole('button', { name: /sign in/i }).first().click()
   await page.getByLabel('Full name').fill('Moderator Demo')
-  await page.getByLabel('Email').fill('moderator@ucc.edu.gh')
+  await page.getByLabel('Email').fill('e2e.moderator@ucc.edu.gh')
   await page.getByLabel('Password').fill('password123')
   await page.getByRole('button', { name: 'Create my account' }).click()
 
@@ -67,4 +67,46 @@ test('a moderator verifies a pending lecturer', async ({ page }) => {
   await card.getByRole('button', { name: 'Verify lecturer' }).click()
   await expect(page.getByText('Dr. Kwame Asante verified as lecturer')).toBeVisible()
   await expect(page.getByRole('listitem').filter({ hasText: 'Dr. Kwame Asante' })).toHaveCount(0)
+})
+
+test('a moderator creates a programme and adds its first course', async ({ page }) => {
+  await page.goto('/me')
+  await page.getByRole('button', { name: /sign in/i }).first().click()
+  await page.getByLabel('Full name').fill('Moderator Demo')
+  await page.getByLabel('Email').fill('e2e.moderator@ucc.edu.gh')
+  await page.getByLabel('Password').fill('password123')
+  await page.getByRole('button', { name: 'Create my account' }).click()
+
+  await page.goto('/moderate?tab=curriculum')
+  await page.getByRole('button', { name: 'New programme' }).click()
+  const sheet = page.getByRole('dialog')
+  await sheet.getByLabel('College').click()
+  await page.getByRole('option').first().click()
+  await sheet.getByLabel('Department').click()
+  await page.getByRole('option').first().click()
+  await sheet.getByLabel('Degree').fill('BSc')
+  await sheet.getByLabel('Full name').fill('BSc Data Science')
+  await sheet.getByRole('button', { name: 'Create programme' }).click()
+
+  await expect(page.getByText('Created BSc Data Science')).toBeVisible()
+  await page.getByLabel('Code').fill('dsc 101')
+  await page.getByLabel('Title').fill('Foundations of Data Science')
+  await page.getByRole('button', { name: 'Add course' }).click()
+  await expect(page.getByText('Added DSC 101 to Level 100')).toBeVisible()
+
+  await page.goto('/program/bsc-data-science')
+  await expect(page.getByRole('heading', { level: 1, name: 'BSc Data Science' })).toBeVisible()
+  await expect(page.getByText('Foundations of Data Science')).toBeVisible()
+})
+
+test('the app runs under the production security headers', async ({ page }) => {
+  const violations: string[] = []
+  page.on('console', (m) => m.text().includes('Content Security Policy') && violations.push(m.text()))
+  await page.goto('/course/mat-101')
+  await expect(page.getByText(/sin 2x = cos x/).first()).toBeVisible()
+  await page.goto('/course/mat-105')
+  await page.getByRole('tab', { name: /Past Qs/ }).click()
+  await page.getByRole('region', { name: '2024' }).getByRole('button').first().click()
+  await expect(page.getByRole('dialog').getByRole('img', { name: 'Page 1' })).toBeVisible()
+  expect(violations).toEqual([])
 })

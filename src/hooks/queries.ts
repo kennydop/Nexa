@@ -11,7 +11,12 @@ export const useColleges = () =>
   useQuery({ queryKey: ['colleges'], queryFn: () => repo.listColleges(), staleTime: HOUR })
 
 export const useDepartments = (collegeId: string) =>
-  useQuery({ queryKey: ['departments', collegeId], queryFn: () => repo.listDepartments(collegeId), staleTime: HOUR })
+  useQuery({
+    queryKey: ['departments', collegeId],
+    queryFn: () => repo.listDepartments(collegeId),
+    enabled: Boolean(collegeId),
+    staleTime: HOUR,
+  })
 
 export const usePrograms = (filter: { collegeId?: string; departmentId?: string }) =>
   useQuery({ queryKey: ['programs', filter], queryFn: () => repo.listPrograms(filter), staleTime: HOUR })

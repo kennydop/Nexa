@@ -1,6 +1,6 @@
-// Generates the demo-mode files (PDFs, images, a short video) in public/demo.
-//   node scripts/build-demo-assets.mjs
-// Every file is stamped as a demo sample: none are official UCC documents.
+// Generates the sample files (PDFs, images, a short video) in public/samples.
+//   pnpm sample-files
+// Every file says it is not an official UCC document: the questions are invented.
 import { execFileSync } from 'node:child_process'
 import { mkdir, mkdtemp, rm } from 'node:fs/promises'
 import { writeFile } from 'node:fs/promises'
@@ -8,10 +8,10 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
 import sharp from 'sharp'
-import { NOTES, PAPERS } from './demo-content/documents.mjs'
+import { NOTES, PAPERS } from './sample-content/documents.mjs'
 
-const OUT = 'public/demo'
-const STAMP = 'Nexa demo sample - not an official UCC document'
+const OUT = 'public/samples'
+const STAMP = 'Practice sample - not an official UCC document'
 const PLUM = rgb(0.353, 0.165, 0.243)
 const BRONZE = rgb(0.722, 0.412, 0.184)
 const INK = rgb(0.1, 0.055, 0.086)
@@ -36,7 +36,7 @@ function wrap(text, font, size, width) {
 async function newDoc(title) {
   const doc = await PDFDocument.create()
   doc.setTitle(title)
-  doc.setProducer('Nexa demo generator')
+  doc.setProducer('Nexa')
   return {
     doc,
     regular: await doc.embedFont(StandardFonts.Helvetica),
@@ -44,7 +44,7 @@ async function newDoc(title) {
   }
 }
 
-/** Adds a page with the header band and demo footer; returns a text cursor. */
+/** Adds a page with the header band and footer; returns a text cursor. */
 function addPage(ctx, kicker, title) {
   const page = ctx.doc.addPage(A4)
   const [w, h] = A4
@@ -64,7 +64,7 @@ function addPage(ctx, kicker, title) {
 
 async function buildPaper(paper) {
   const ctx = await newDoc(`${paper.course} - ${paper.exam}`)
-  const { write, space } = addPage(ctx, 'University of Cape Coast · demo past question', paper.course)
+  const { write, space } = addPage(ctx, 'Practice past question', paper.course)
   write(paper.exam, { font: ctx.bold, size: 13 })
   write(paper.instructions, { size: 10, color: PLUM })
   space(10)
@@ -85,7 +85,7 @@ async function buildPaper(paper) {
 async function buildNotes(notes) {
   const ctx = await newDoc(notes.title)
   for (const page of notes.pages) {
-    const { write, space } = addPage(ctx, `${notes.course} · demo notes`, notes.title)
+    const { write, space } = addPage(ctx, `${notes.course} · study notes`, notes.title)
     write(page.heading, { font: ctx.bold, size: 15, color: PLUM })
     space(8)
     for (const line of page.lines) {
@@ -115,7 +115,7 @@ function freeBodySvg() {
     ${arrow(600, 545, 520, 385, 'N', 480, 380)}
     ${arrow(600, 545, 780, 455, 'F (friction)', 760, 430)}
     ${svgText(60, 830, 'Resolve along the slope: mg sin t - F = ma.   Perpendicular: N = mg cos t.', 26, 600)}
-    ${svgText(60, 870, 'Nexa demo sample - not an official UCC document', 18, 500, '#b8692f')}
+    ${svgText(60, 870, 'Practice sample - not an official UCC document', 18, 500, '#b8692f')}
   </svg>`
 }
 
@@ -135,7 +135,7 @@ function handwrittenPaperSvg() {
     <rect width="1200" height="1100" fill="#fbf8f1"/>
     <line x1="70" x2="70" y1="0" y2="1100" stroke="#f0b4b4" stroke-width="3"/>
     ${rules}${rows}
-    ${svgText(90, 1060, 'Photo of a demo paper - not an official UCC document', 22, 600, '#b8692f')}
+    ${svgText(90, 1060, 'Practice paper - not an official UCC document', 22, 600, '#b8692f')}
   </svg>`
 }
 
@@ -155,7 +155,7 @@ const SLIDES = [
   ['12 V across 4 ohms', 'I = 12 / 4 = 3 A'],
   ['Double R, halve I', '12 V across 8 ohms gives 1.5 A'],
   ['Power: P = V x I', '12 V x 3 A = 36 W'],
-  ['Practise with past questions', 'Nexa demo sample'],
+  ['Practise with past questions', 'Find them on Nexa'],
 ]
 const FPS = 24
 const SLIDE_SECONDS = 2.5
@@ -170,7 +170,7 @@ function frameSvg([title, sub], progress, overall) {
     ${svgText(110, 330, title, 72, 800, '#f7eee6')}
     ${svgText(110, 410, sub, 38, 500, '#f0a062')}
     <rect x="110" y="600" width="${(VW - 220) * overall}" height="8" rx="4" fill="#f0a062"/>
-    ${svgText(110, 660, 'Nexa demo video - not official UCC material', 22, 500, '#b9a6ae')}
+    ${svgText(110, 660, 'Nexa study video', 22, 500, '#b9a6ae')}
   </svg>`
 }
 

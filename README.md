@@ -23,14 +23,16 @@ pnpm install
 pnpm dev            # http://localhost:5173
 ```
 
-When no Supabase keys are set, the app runs in **demo mode**. It uses the full bundled UCC catalogue, and any posts, votes, bookmarks and uploads are kept in that browser only. A banner shows that demo mode is on.
+With `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in `.env.local`, the app uses Supabase. Without them it runs offline against the bundled catalogue and sample content, keeping changes in the browser (handy for development; nothing in the UI announces it).
 
-Demo mode comes preloaded with sample discussions (MAT 105, GEN 103, GEN 105, CMS 107, ACC 101, NUR 101, ECO 101), materials, past questions and a people directory. All people are fictional. The sample files in `public/demo` (PDFs, two images and a short video) are stamped "not an official UCC document"; regenerate them with `pnpm demo-assets` (needs `ffmpeg`). In demo mode any password works:
+## Sample content
 
-- Any `@stu.ucc.edu.gh` address signs you in as a verified student; any `@ucc.edu.gh` address as a verified lecturer.
-- `moderator@ucc.edu.gh` also opens the **moderator portal** (Me → Moderator portal, or `/moderate`).
+`src/data/seed/content.ts` holds the sample discussions (59 threads, 161 posts, weighted towards CMS 107/108, ILT 101, MAT 101 and PHY 101), materials and past questions, written by 22 fictional people. The same file feeds both the offline mode and the Supabase seed:
 
-The sample content lives only in demo mode. It is not part of `supabase/seed.sql`.
+- `pnpm db:sql` regenerates `supabase/seed-content.sql` and `supabase/setup.sql`.
+- Sample accounts use the reserved domain `@sample.nexa.invalid`, so no real person can own those addresses and nobody can sign in as them.
+- `supabase/remove-sample-content.sql` deletes every sample account and everything they posted.
+- The sample files live in `public/samples` (regenerate with `pnpm sample-files`, needs `ffmpeg`). Each one says it is not an official UCC document, because the questions are invented.
 
 ## Verification
 
@@ -51,7 +53,7 @@ The domain must match exactly, so lookalikes such as `ucc.edu.gh.evil.com` are r
 - **People**: review queue for people who say they are UCC staff or students without a UCC email. Verify, decline, change roles, and grant or remove moderator access (you cannot remove your own).
 - **Content**: every post, material and past question, newest first. Open files in the viewer, hide or unhide, or delete permanently.
 - **Upload**: find any course and add materials (files, videos, YouTube links) or past questions.
-- **Courses**: add or remove courses in any programme's curriculum by level and semester, for the many programmes with no published list.
+- **Catalogue**: create new programmes (college, department, award, levels) and add or remove courses in any programme by level and semester.
 
 ## In-app viewer
 
@@ -59,16 +61,23 @@ PDFs, images and videos open full-screen inside the app, with download and open-
 
 ## Connect Supabase
 
-1. Create a project at supabase.com.
-2. Apply the schema and load the catalogue:
-   ```bash
-   supabase link --project-ref <ref>
-   supabase db push                                    # supabase/migrations/*
-   psql "$DATABASE_URL" -f supabase/seed.sql           # or paste it into the SQL editor
+1. In the Supabase dashboard, open **SQL Editor**, paste all of `supabase/setup.sql` and run it once. It creates the schema, loads the UCC catalogue and the sample content. (With the Supabase CLI you can instead run `supabase db push` for `supabase/migrations`, then the two seed files.)
+2. Put the project URL and publishable key in `.env.local` (see `.env.example`).
+3. In **Authentication → Sign In / Providers → Email**, keep "Confirm email" on. Verification depends on it.
+4. In **Authentication → URL Configuration**, set the Site URL to the deployed address and add it to Redirect URLs.
+5. Sign up in the app, then make yourself the first moderator in the SQL editor:
+   ```sql
+   update public.profiles set is_moderator = true
+   where id = (select id from auth.users where email = 'you@ucc.edu.gh');
    ```
-3. Copy `.env.example` to `.env.local` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-4. In Auth settings, keep "Confirm email" on and add your site URL so confirmation emails link back to the app.
-5. Make the first moderator in the SQL editor: `update profiles set is_moderator = true where id = '<user uuid>';` After that, moderators can promote others from the portal.
+   After that, moderators promote others from the portal.
+6. Supabase's built-in email sender only sends a few emails an hour. Before launch, add your own SMTP server under **Authentication → Emails**.
+
+## Deploy to Vercel
+
+Import the GitHub repository in Vercel (framework: Vite; `vercel.json` sets the build, SPA routing, cache rules and security headers including a strict Content Security Policy). Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` as environment variables, deploy, then put the Vercel address into Supabase's URL Configuration (step 4 above).
+
+The CSP allows the inline theme script in `index.html` by hash. If you edit that script, update the hash in `vercel.json`; `tests/csp.test.ts` fails until you do.
 
 ### Security model
 
@@ -90,6 +99,7 @@ Only some programmes have published course lists. These have full Level 100–40
 ```bash
 # edit data/ucc-catalog.json, then regenerate both outputs:
 node scripts/build-catalog.mjs   # → src/data/demo/catalog.json + supabase/seed.sql
+pnpm db:sql                      # → supabase/setup.sql
 ```
 
 ## Scripts
@@ -98,10 +108,11 @@ node scripts/build-catalog.mjs   # → src/data/demo/catalog.json + supabase/see
 | --- | --- |
 | `pnpm dev` / `pnpm build` / `pnpm preview` | Develop, build, serve the production build |
 | `pnpm test` | Unit tests (Vitest) |
-| `pnpm test:e2e` | Playwright end-to-end tests at phone size (runs against `pnpm preview`) |
+| `pnpm test:e2e` | Playwright end-to-end tests at phone size, always in offline mode with production headers |
 | `pnpm lint` | oxlint |
 | `node scripts/generate-icons.mjs` | Regenerate PWA/iOS icons from `brand/mark.svg` |
-| `pnpm demo-assets` | Regenerate the demo PDFs, images and video in `public/demo` |
+| `pnpm sample-files` | Regenerate the sample PDFs, images and video in `public/samples` |
+| `pnpm db:sql` | Regenerate `supabase/seed-content.sql` and `supabase/setup.sql` |
 | `node scripts/screens.mjs <dir>` | Screenshot key screens in light and dark |
 
 ## Renaming the app

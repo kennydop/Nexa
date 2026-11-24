@@ -3,8 +3,16 @@ import type { AuthService, SignUpInput } from '../auth'
 import type { Person, Profile, UserRole } from '../types'
 import { newId, type DemoStore } from './store'
 
-/** Demo accounts whose email starts with this get moderator access. */
-export const DEMO_MODERATOR_PREFIX = 'moderator@'
+/**
+ * Demo mode has no server to grant moderator access, so it comes from a
+ * build-time list (used by the end-to-end tests). Never shown in the UI.
+ */
+const DEMO_MODERATORS = new Set(
+  String(import.meta.env.VITE_DEMO_MODERATOR_EMAILS ?? '')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
+)
 
 function buildProfile(email: string, fullName: string, claimedRole: UserRole, existing: Profile | null): Profile {
   // In demo mode the email is treated as already confirmed.
@@ -15,7 +23,7 @@ function buildProfile(email: string, fullName: string, claimedRole: UserRole, ex
     fullName,
     role: derived ?? claimedRole,
     isVerified: derived !== null,
-    isModerator: email.toLowerCase().startsWith(DEMO_MODERATOR_PREFIX),
+    isModerator: DEMO_MODERATORS.has(email.trim().toLowerCase()),
     programId: existing?.programId ?? null,
     level: existing?.level ?? null,
   }

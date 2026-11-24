@@ -143,6 +143,15 @@ export interface ModerationItem {
   createdAt: string
 }
 
+export interface ProgramInput {
+  name: string
+  degree: string
+  awardLevel: AwardLevel
+  collegeId: string
+  departmentId: string
+  levels: number[]
+}
+
 export interface CurriculumCourseInput {
   programId: string
   code: string

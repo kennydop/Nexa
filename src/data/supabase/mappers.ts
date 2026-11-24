@@ -53,7 +53,8 @@ export interface PastQuestionRow extends Uploader {
   year: number
   semester: 1 | 2
   exam_type: ExamType
-  file_path: string
+  file_path: string | null
+  url: string | null
   mime_type: string | null
   created_at: string
 }
@@ -158,7 +159,7 @@ export const mapPastQuestion = (r: PastQuestionRow, toUrl: ToUrl): PastQuestion 
   year: r.year,
   semester: r.semester,
   examType: r.exam_type,
-  url: toUrl(r.file_path),
+  url: r.file_path ? toUrl(r.file_path) : (r.url ?? ''),
   mimeType: r.mime_type,
   uploaderName: r.uploader?.full_name ?? 'Unknown',
   createdAt: r.created_at,

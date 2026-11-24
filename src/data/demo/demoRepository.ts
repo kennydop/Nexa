@@ -31,11 +31,12 @@ export class DemoRepository implements Repository {
   /** Bundled catalogue plus moderator curriculum edits. */
   private async catalog(): Promise<Catalog> {
     const base = await this.baseCatalog
-    const { extraCourses, extraCurriculum, removedCurriculum } = this.state
+    const { extraCourses, extraCurriculum, extraPrograms, removedCurriculum } = this.state
     const removed = new Set(removedCurriculum)
     const known = new Set(base.courses.map((c) => c.id))
     return {
       ...base,
+      programs: [...base.programs, ...extraPrograms],
       courses: [...base.courses, ...extraCourses.filter((c) => !known.has(c.id))],
       curriculum: [...base.curriculum, ...extraCurriculum].filter(
         (row) => !removed.has(curriculumKey(row.programId, row.courseId)),
@@ -61,7 +62,7 @@ export class DemoRepository implements Repository {
   }
 
   async listPrograms(filter: { collegeId?: string; departmentId?: string }) {
-    return (await this.baseCatalog).programs.filter(
+    return (await this.catalog()).programs.filter(
       (p) =>
         (!filter.collegeId || p.collegeId === filter.collegeId) &&
         (!filter.departmentId || p.departmentId === filter.departmentId),
@@ -69,7 +70,7 @@ export class DemoRepository implements Repository {
   }
 
   async getProgram(id: string) {
-    return (await this.baseCatalog).programs.find((p) => p.id === id) ?? null
+    return (await this.catalog()).programs.find((p) => p.id === id) ?? null
   }
 
   async getCurriculum(programId: string) {

@@ -1,4 +1,4 @@
-import { BookOpenText, CaretRight, Plus, Trash } from '@phosphor-icons/react'
+import { BookOpenText, CaretRight, Plus, PlusCircle, Trash } from '@phosphor-icons/react'
 import { useState, type FormEvent } from 'react'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { ProgramPickerSheet } from '@/features/profile/ProgramPickerSheet'
 import { useCurriculum } from '@/hooks/queries'
 import { coursesFor } from '@/lib/academic'
 import { normaliseCourseCode } from '@/lib/institution'
+import { NewProgramSheet } from './NewProgramSheet'
 import { useAddCurriculumCourse, useRemoveCurriculumCourse } from './queries'
 
 const DEFAULT_LEVELS = [100, 200, 300, 400]
@@ -75,6 +76,7 @@ function AddCourseForm({ programId, level, semester }: { programId: string; leve
 export function CurriculumPanel() {
   const [program, setProgram] = useState<Program | null>(null)
   const [picking, setPicking] = useState(false)
+  const [creating, setCreating] = useState(false)
   const [level, setLevel] = useState(100)
   const [semester, setSemester] = useState<1 | 2>(1)
   const [pendingRemove, setPendingRemove] = useState<CurriculumEntry | null>(null)
@@ -86,7 +88,7 @@ export function CurriculumPanel() {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted">
-        Many programmes have no published course list. Add the courses students take so materials and discussions have a home.
+        Add programmes that aren’t listed yet, and the courses students take in each, so materials and discussions have a home.
       </p>
       <button
         type="button"
@@ -100,6 +102,10 @@ export function CurriculumPanel() {
         </span>
         <CaretRight size={20} weight="bold" className="text-muted" />
       </button>
+      <Button variant="secondary" onClick={() => setCreating(true)}>
+        <PlusCircle size={20} />
+        New programme
+      </Button>
 
       {program && (
         <>
@@ -157,6 +163,15 @@ export function CurriculumPanel() {
           setProgram(picked)
           setLevel(picked.levels[0] ?? 100)
           setPicking(false)
+        }}
+      />
+      <NewProgramSheet
+        open={creating}
+        onOpenChange={setCreating}
+        onCreated={(created) => {
+          setProgram(created)
+          setLevel(created.levels[0] ?? 100)
+          setCreating(false)
         }}
       />
       <ConfirmSheet

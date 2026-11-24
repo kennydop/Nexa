@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { backend } from '@/data/backend'
-import type { ContentKind, ContentStatus, CurriculumCourseInput, UserRole } from '@/data/types'
+import type { ContentKind, ContentStatus, CurriculumCourseInput, Program, ProgramInput, UserRole } from '@/data/types'
 import { errorMessage } from '@/lib/utils'
 
 const { moderation } = backend
@@ -17,7 +17,7 @@ export const useModerationFeed = () =>
   useQuery({ queryKey: ['mod', 'content'], queryFn: () => moderation.listContent() })
 
 /** Shared success/error handling; refreshes moderator lists and public views. */
-function useModAction<TVars>(run: (vars: TVars) => Promise<void>, success: (vars: TVars) => string) {
+function useModAction<TVars, TResult = void>(run: (vars: TVars) => Promise<TResult>, success: (vars: TVars) => string) {
   const client = useQueryClient()
   return useMutation({
     mutationFn: run,
@@ -64,4 +64,10 @@ export const useRemoveCurriculumCourse = () =>
   useModAction(
     (v: { programId: string; courseId: string; code: string }) => moderation.removeCurriculumCourse(v.programId, v.courseId),
     (v) => `Removed ${v.code}`,
+  )
+
+export const useAddProgram = () =>
+  useModAction<ProgramInput, Program>(
+    (input) => moderation.addProgram(input),
+    (input) => `Created ${input.name.trim()}`,
   )

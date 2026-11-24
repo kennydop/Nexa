@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { courseIdFromCode, institutionalRole, normaliseCourseCode } from './institution'
+import { courseIdFromCode, institutionalRole, normaliseCourseCode, defaultLevels, programIdFromName } from './institution'
 
 describe('institutionalRole', () => {
   it('maps student and staff domains', () => {
@@ -22,5 +22,20 @@ describe('course codes', () => {
   it('derives ids that match the catalogue', () => {
     expect(courseIdFromCode('CSC 101')).toBe('csc-101')
     expect(courseIdFromCode('ASP 148B')).toBe('asp-148b')
+  })
+})
+
+describe('programIdFromName', () => {
+  it('slugs the programme name like the catalogue ids', () => {
+    expect(programIdFromName('BSc Computer Engineering')).toBe('bsc-computer-engineering')
+    expect(programIdFromName('  MPhil (Mathematics Education) ')).toBe('mphil-mathematics-education')
+  })
+})
+
+describe('defaultLevels', () => {
+  it('matches how UCC numbers its levels', () => {
+    expect(defaultLevels('undergraduate')).toEqual([100, 200, 300, 400])
+    expect(defaultLevels('diploma')).toEqual([100, 200])
+    expect(defaultLevels('postgraduate')).toEqual([800])
   })
 })

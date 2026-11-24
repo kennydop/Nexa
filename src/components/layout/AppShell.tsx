@@ -2,7 +2,6 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { useAuth } from '@/features/auth/context'
-import { DemoBanner } from './DemoBanner'
 import { TabBar } from './TabBar'
 
 const SignInSheet = lazy(() => import('@/features/auth/SignInSheet').then((m) => ({ default: m.SignInSheet })))
@@ -20,7 +19,6 @@ export function AppShell() {
 
   return (
     <div className="atmosphere relative min-h-dvh">
-      <DemoBanner />
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
           key={location.pathname}

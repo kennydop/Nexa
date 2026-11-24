@@ -1,6 +1,7 @@
-import { courseIdFromCode, normaliseCourseCode } from '@/lib/institution'
+import { courseIdFromCode, normaliseCourseCode, programIdFromName } from '@/lib/institution'
 import { RepositoryError, type ModerationRepository } from '../repository'
-import type { ContentKind, ContentStatus, CurriculumCourseInput, ModerationItem, Person, UserRole } from '../types'
+import { loadCatalog } from '../catalog'
+import type { ContentKind, ContentStatus, CurriculumCourseInput, ModerationItem, Person, Program, ProgramInput, UserRole } from '../types'
 import { SAMPLE_MATERIALS, SAMPLE_PAST_QUESTIONS, SAMPLE_PEOPLE, SAMPLE_POSTS } from './samples'
 import { curriculumKey, type DemoStore } from './store'
 
@@ -143,5 +144,15 @@ export class DemoModeration implements ModerationRepository {
   async removeCurriculumCourse(programId: string, courseId: string) {
     this.requireModerator()
     this.store.update((s) => ({ ...s, removedCurriculum: [curriculumKey(programId, courseId), ...s.removedCurriculum] }))
+  }
+
+  async addProgram(input: ProgramInput): Promise<Program> {
+    this.requireModerator()
+    const id = programIdFromName(input.name)
+    const taken = (await loadCatalog()).programs.some((p) => p.id === id) || this.store.state.extraPrograms.some((p) => p.id === id)
+    if (taken) throw new RepositoryError(`${input.name.trim()} already exists.`)
+    const program: Program = { ...input, id, name: input.name.trim(), degree: input.degree.trim() }
+    this.store.update((s) => ({ ...s, extraPrograms: [program, ...s.extraPrograms] }))
+    return program
   }
 }

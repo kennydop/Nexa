@@ -10,6 +10,7 @@ import type {
   ContentKind,
   ContentStatus,
   CurriculumCourseInput,
+  ProgramInput,
   ModerationItem,
   PastQuestion,
   Person,
@@ -90,6 +91,7 @@ export interface ModerationRepository {
   deleteContent(kind: ContentKind, id: string): Promise<void>
   addCurriculumCourse(input: CurriculumCourseInput): Promise<void>
   removeCurriculumCourse(programId: string, courseId: string): Promise<void>
+  addProgram(input: ProgramInput): Promise<Program>
 }
 
 export const ALREADY_RATED = 'You’ve already rated this course. Post without stars to add more thoughts.'

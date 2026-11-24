@@ -17,7 +17,8 @@ export interface Backend {
 
 function createBackend(): Backend {
   const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+  // Supabase's newer "publishable" key; older projects call it the anon key.
+  const key = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined
   if (url && key) {
     const db = createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true } })
     return { repo: new SupabaseRepository(db), auth: new SupabaseAuth(db), moderation: new SupabaseModeration(db) }

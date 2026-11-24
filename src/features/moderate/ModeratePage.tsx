@@ -15,7 +15,7 @@ const TABS = [
   { value: 'people', label: 'People', icon: UsersThree, Panel: PeoplePanel },
   { value: 'content', label: 'Content', icon: ChatCircleText, Panel: ContentPanel },
   { value: 'upload', label: 'Upload', icon: FileArrowUp, Panel: UploadPanel },
-  { value: 'curriculum', label: 'Courses', icon: BookOpenText, Panel: CurriculumPanel },
+  { value: 'curriculum', label: 'Catalogue', icon: BookOpenText, Panel: CurriculumPanel },
 ] as const
 
 type TabValue = (typeof TABS)[number]['value']

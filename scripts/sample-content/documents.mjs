@@ -1,4 +1,4 @@
-// Text of the demo PDFs. Written for demonstration only: these are NOT
+// Text of the sample PDFs. Invented practice material: these are NOT
 // official UCC examination papers or lecture notes.
 
 export const PAPERS = [

@@ -7,7 +7,6 @@ import { Field, Input } from '@/components/ui/input'
 import { Segmented } from '@/components/ui/segmented'
 import { Sheet } from '@/components/ui/sheet'
 import { backend } from '@/data/backend'
-import { DEMO_MODERATOR_PREFIX } from '@/data/demo/demoAuth'
 import type { UserRole } from '@/data/types'
 import { institutionalRole, STAFF_DOMAIN, STUDENT_DOMAIN } from '@/lib/institution'
 import { cn, errorMessage } from '@/lib/utils'
@@ -164,12 +163,6 @@ export function SignInSheet() {
         <Button type="submit" size="lg" block disabled={busy} className="mt-2">
           {busy ? 'One moment…' : mode === 'signup' ? 'Create my account' : 'Sign in'}
         </Button>
-        {backend.repo.mode === 'demo' && (
-          <p className="rounded-2xl bg-surface-2 px-3 py-2.5 text-center text-xs text-muted">
-            Demo: any password works. Use <strong className="text-text">{DEMO_MODERATOR_PREFIX}{STAFF_DOMAIN}</strong> to
-            open the moderator portal.
-          </p>
-        )}
       </form>
     </Sheet>
   )

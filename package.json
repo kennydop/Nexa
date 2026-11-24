@@ -12,7 +12,8 @@
     "test:e2e": "playwright test",
     "catalog": "node scripts/build-catalog.mjs",
     "icons": "node scripts/generate-icons.mjs",
-    "demo-assets": "node scripts/build-demo-assets.mjs"
+    "sample-files": "node scripts/build-sample-files.mjs",
+    "db:sql": "node scripts/build-supabase-sql.mjs"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

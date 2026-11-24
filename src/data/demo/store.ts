@@ -1,5 +1,5 @@
 import type { CurriculumRow } from '../catalog'
-import type { Course, Material, PastQuestion, Person, Post, Profile } from '../types'
+import type { Course, Material, PastQuestion, Person, Post, Profile, Program } from '../types'
 
 /** Everything a visitor can change in demo mode, persisted per browser. */
 export interface DemoState {
@@ -14,6 +14,7 @@ export interface DemoState {
   hiddenIds: string[]
   deletedIds: string[]
   extraCourses: Course[]
+  extraPrograms: Program[]
   extraCurriculum: CurriculumRow[]
   removedCurriculum: string[]
 }
@@ -31,6 +32,7 @@ export const EMPTY_STATE: DemoState = {
   hiddenIds: [],
   deletedIds: [],
   extraCourses: [],
+  extraPrograms: [],
   extraCurriculum: [],
   removedCurriculum: [],
 }
