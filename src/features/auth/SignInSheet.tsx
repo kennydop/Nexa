@@ -65,7 +65,7 @@ export function SignInSheet() {
   const [claim, setClaim] = useState<UserRole>('visitor')
   const [errors, setErrors] = useState<Errors>({})
   const [busy, setBusy] = useState(false)
-  const [awaitingEmail, setAwaitingEmail] = useState<string | null>(null)
+  const [awaitingEmail, setAwaitingEmail] = useState<{ email: string; justSent: boolean } | null>(null)
   const detected = institutionalRole(email)
   const showClaims = mode === 'signup' && email.includes('@') && detected === null
 
@@ -92,7 +92,7 @@ export function SignInSheet() {
           role,
         })
         if (needsEmailConfirmation) {
-          setAwaitingEmail(data.email)
+          setAwaitingEmail({ email: data.email, justSent: true })
           return
         }
         toast.success(`Welcome, ${data.fullName.split(' ')[0]}!`)
@@ -100,7 +100,7 @@ export function SignInSheet() {
       closeSignIn()
     } catch (error) {
       if (error instanceof EmailNotConfirmedError) {
-        setAwaitingEmail(error.email)
+        setAwaitingEmail({ email: error.email, justSent: false })
         return
       }
       toast.error(errorMessage(error))
@@ -124,7 +124,8 @@ export function SignInSheet() {
     >
       {awaitingEmail ? (
         <CheckInbox
-          email={awaitingEmail}
+          email={awaitingEmail.email}
+          justSent={awaitingEmail.justSent}
           onBack={() => {
             setAwaitingEmail(null)
             setMode('signin')
