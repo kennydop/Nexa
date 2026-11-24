@@ -29,3 +29,5 @@ test-results
 playwright-report
 .impeccable/
 dist-e2e
+.vercel
+.env*
