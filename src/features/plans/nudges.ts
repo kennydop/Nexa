@@ -4,7 +4,9 @@ export const SNOOZE_MS = 14 * DAY_MS
 /** Opening this many files in a day suggests the person is studying hard: offer help. */
 export const STUDY_STREAK_OPENS = 3
 
-export type NudgeId = 'home-exam-planner' | 'pq-tracker' | 'saved-offline' | 'materials-offline' | 'viewer-assistant'
+export type NudgeId =
+  | 'search-plans'
+  | 'home-exam-planner' | 'pq-tracker' | 'saved-offline' | 'materials-offline' | 'viewer-assistant'
 
 export interface NudgeState {
   readonly dismissed: Readonly<Partial<Record<NudgeId, number>>>

@@ -75,3 +75,16 @@ test('opening a third file in a day suggests the study assistant once', async ({
   await expect(viewer.getByRole('img', { name: 'Page 1' })).toBeVisible()
   await expect(callout).toHaveCount(0)
 })
+
+test('Search shows the plans card until something is typed', async ({ page }) => {
+  await signUp(page)
+  await page.goto('/search')
+  const card = page.getByRole('region', { name: 'Found your course? Study it faster.' })
+  await expect(card).toContainText('GH₵45')
+  await expect(card).toContainText('GH₵99')
+  await page.getByRole('searchbox', { name: /search courses/i }).fill('mat105')
+  await expect(card).toHaveCount(0)
+  await page.getByRole('button', { name: 'Clear search' }).click()
+  await card.getByRole('button', { name: 'Not now' }).click()
+  await expect(card).toHaveCount(0)
+})

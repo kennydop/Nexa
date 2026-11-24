@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router'
 import { CourseRow } from '@/components/CourseRow'
 import { ProgramRow } from '@/components/ProgramRow'
 import { EmptyState } from '@/components/ui/empty-state'
+import { SearchPlansCard } from '@/features/plans/SearchPlansCard'
 import { useDebounced } from '@/hooks/useDebounced'
 import { useSearch } from '@/hooks/queries'
 
@@ -62,6 +63,8 @@ export function SearchPage() {
           </ul>
         </section>
       )}
+
+      {!hasQuery && <SearchPlansCard />}
 
       {empty && (
         <EmptyState icon={MagnifyingGlass} title="Nothing found" body={`No courses or programmes match “${debounced}”.`} />
